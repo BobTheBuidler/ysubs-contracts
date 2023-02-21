@@ -32,7 +32,7 @@ def __init__(currency: address):
     self.owner = msg.sender
     self.is_active = True
     CURRENCY = ERC20(currency)
-    API_VERSION = "v0.0.0"
+    API_VERSION = "0.0.0"
 
 ##################
 # View functions #
