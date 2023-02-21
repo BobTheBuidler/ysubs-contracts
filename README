@@ -1,0 +1,5 @@
+ySubs is a system that makes on-chain subscriptions possible.
+
+Deploy a ySubs Subscriber contract for your service, define your service tiers, or "Plans", and use the ysubs python lib, available on pypi, to validate your user's API access.
+
+[ysubs-py](https://github.com/BobTheBuidler/ysubs-py)
