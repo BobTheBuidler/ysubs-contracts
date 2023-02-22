@@ -35,3 +35,9 @@ def test_retire_plan(subscriber_contract, accounts):
         subscriber_contract.create_plan(amount, _from(owner))
         subscriber_contract.activate_plan(i, _from(owner))
         subscriber_contract.retire_plan(i, _from(owner))
+
+def test_retire_contract(subscriber_contract, accounts):
+    owner, bad_guy = accounts[0], accounts[1]
+    with brownie.reverts("You are not the owner."):
+        subscriber_contract.retire_contract(_from(bad_guy))
+    subscriber_contract.retire_contract(_from(owner))
