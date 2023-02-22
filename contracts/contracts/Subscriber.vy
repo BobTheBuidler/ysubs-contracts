@@ -109,7 +109,7 @@ def activate_plan(plan_id: uint8):
     assert self.is_active, "Subscription contract has been retired"
     assert self.owner == msg.sender, "You are not the owner."
     plan: Plan = self.plans[plan_id]
-    assert plan.price > 0, "Plan does not yet exist."
+    assert plan.price > 0, "Plan does not exist."
     assert not plan.is_active, "Plan is already active."
     self.plans[plan_id].is_active = True
 
