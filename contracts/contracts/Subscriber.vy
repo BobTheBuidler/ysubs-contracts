@@ -15,9 +15,10 @@ num_plans: uint8
 plans: HashMap[uint8, Plan]
 subscriptions: HashMap[uint8, HashMap[address, uint256]]
 
-event NewPlan:
+event PlanCreated:
     plan_id: uint8
     price: uint256
+    ts: uint256
 
 event NewSubscriber:
     plan_id: uint8
@@ -114,7 +115,7 @@ def create_plan(price: uint256) -> Plan:
     plan_id: uint8 = self.num_plans + 1
     self.plans[plan_id] = plan
     self.num_plans = plan_id
-    log NewPlan(plan_id, price)
+    log PlanCreated(plan_id, price, block.timestamp)
     return plan
 
 @external
