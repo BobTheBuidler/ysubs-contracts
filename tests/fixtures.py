@@ -1,6 +1,7 @@
 
 import pytest
 
+MAX_POOL_CT = 100
 LUSD = "0x5f98805A4E8be255a32880FDeC7F6728C6568bA0"
 
 def _from(account) -> dict:
