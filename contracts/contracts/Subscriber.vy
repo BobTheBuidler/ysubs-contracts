@@ -61,6 +61,11 @@ def subscription_end(plan_id: uint8, subscriber: address) -> uint256:
 def get_plan(plan_id: uint8) -> Plan:
     return self.plans[plan_id]
 
+@view
+@external
+def plan_count() -> uint8:
+    return self.num_plans
+
 ########################
 # Subscriber functions #
 ########################
@@ -81,7 +86,7 @@ def subscribe_for(plan_id: uint8, amount: uint256, wallet: address) -> uint256:
 def _subscribe(plan_id: uint8, amount: uint256, subscriber: address) -> uint256:
     assert self.is_active, "Subscription contract has been retired"
     plan: Plan = self.plans[plan_id]
-    assert plan.is_active, "Plan has been retired."
+    assert plan.is_active, "Plan does not exist or has been retired."
     CURRENCY.transferFrom(subscriber, self, amount)
     duration: uint256 = amount / plan.price
     log NewSubscriber(plan_id, subscriber, duration)
