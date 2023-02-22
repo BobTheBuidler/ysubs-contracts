@@ -49,19 +49,6 @@ def __init__(currency: address):
 
 @view
 @external
-def active_plan(subscriber: address) -> (uint8, uint256):
-    subscription_end_timestamp: uint256 = 0
-    for _i in range(99999):
-        i: uint8 = convert(_i, uint8)
-        if i > self.num_plans:
-            break
-        subscription_end_timestamp = self.subscriptions[i][subscriber]
-        if subscription_end_timestamp >= block.timestamp:
-            return i, subscription_end_timestamp
-    return 0, 0
-
-@view
-@external
 def subscription_end(plan_id: uint8, subscriber: address) -> uint256:
     return self.subscriptions[plan_id][subscriber]
 
