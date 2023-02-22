@@ -24,7 +24,15 @@ event NewSubscriber:
     subscriber: address
     duration: uint256
 
-event Retired:
+event PlanActivated:
+    plan_id: uint8
+    ts: uint256
+    
+event PlanRetired:
+    plan_id: uint8
+    ts: uint256
+
+event SubscriberRetired:
     ts: uint256
 
 @external
@@ -117,6 +125,7 @@ def activate_plan(plan_id: uint8):
     assert plan.price > 0, "Plan does not exist."
     assert not plan.is_active, "Plan is already active."
     self.plans[plan_id].is_active = True
+    log PlanActivated(plan_id, block.timestamp)
 
 @external
 def retire_plan(plan_id: uint8):
@@ -125,10 +134,11 @@ def retire_plan(plan_id: uint8):
     plan: Plan = self.plans[plan_id]
     assert plan.is_active, "Plan is not active."
     plan.is_active = False
+    log PlanRetired(plan_id, block.timestamp)
 
 @external
 def retire_contract():
     assert self.is_active, "Subscription contract has been retired"
     assert self.owner == msg.sender, "You are not the owner."
     self.is_active = False
-    log Retired(block.timestamp)
+    log SubscriberRetired(block.timestamp)
