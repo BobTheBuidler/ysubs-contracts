@@ -49,11 +49,6 @@ def __init__(currency: address):
 
 @view
 @external
-def subscription_end(plan_id: uint8, subscriber: address) -> uint256:
-    return self.subscriptions[plan_id][subscriber]
-
-@view
-@external
 def get_plan(plan_id: uint8) -> Plan:
     return self.plans[plan_id]
 
@@ -61,6 +56,11 @@ def get_plan(plan_id: uint8) -> Plan:
 @external
 def plan_count() -> uint8:
     return self.num_plans
+
+@view
+@external
+def subscription_end(plan_id: uint8, subscriber: address) -> uint256:
+    return self.subscriptions[plan_id][subscriber]
 
 ########################
 # Subscriber functions #
