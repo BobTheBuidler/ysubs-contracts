@@ -15,26 +15,23 @@ num_plans: uint8
 plans: HashMap[uint8, Plan]
 subscriptions: HashMap[uint8, HashMap[address, uint256]]
 
-event PlanCreated:
-    plan_id: uint8
-    price: uint256
-    ts: uint256
-
 event NewSubscriber:
     plan_id: uint8
     subscriber: address
     duration: uint256
 
+event PlanCreated:
+    plan_id: uint8
+    price: uint256
+
 event PlanActivated:
     plan_id: uint8
-    ts: uint256
     
 event PlanRetired:
     plan_id: uint8
-    ts: uint256
 
 event SubscriberRetired:
-    ts: uint256
+    pass
 
 @external
 def __init__(currency: address):
@@ -102,7 +99,7 @@ def create_plan(price: uint256) -> Plan:
     plan_id: uint8 = self.num_plans + 1
     self.plans[plan_id] = plan
     self.num_plans = plan_id
-    log PlanCreated(plan_id, price, block.timestamp)
+    log PlanCreated(plan_id, price)
     return plan
 
 @external
@@ -113,7 +110,7 @@ def activate_plan(plan_id: uint8):
     assert plan.price > 0, "Plan does not exist."
     assert not plan.is_active, "Plan is already active."
     self.plans[plan_id].is_active = True
-    log PlanActivated(plan_id, block.timestamp)
+    log PlanActivated(plan_id)
 
 @external
 def retire_plan(plan_id: uint8):
@@ -122,11 +119,11 @@ def retire_plan(plan_id: uint8):
     plan: Plan = self.plans[plan_id]
     assert plan.is_active, "Plan is not active."
     plan.is_active = False
-    log PlanRetired(plan_id, block.timestamp)
+    log PlanRetired(plan_id)
 
 @external
 def retire_contract():
     assert self.is_active, "Subscription contract has been retired"
     assert self.owner == msg.sender, "You are not the owner."
     self.is_active = False
-    log SubscriberRetired(block.timestamp)
+    log SubscriberRetired()
