@@ -82,6 +82,11 @@ def subscribe_for(plan_id: uint8, amount: uint256, wallet: address) -> uint256:
 ######################
 
 @internal
+def _check_owner_and_active():
+    assert msg.sender == self.owner, "Only contract owner can call this function."
+    assert self.is_active, "Subscription contract has been retired"
+
+@internal
 def _subscribe(plan_id: uint8, amount: uint256, subscriber: address) -> uint256:
     assert self.is_active, "Subscription contract has been retired"
     plan: Plan = self.plans[plan_id]
@@ -102,9 +107,8 @@ def create_plan(name: String[255], price: uint256, rate_limit: uint256, time_int
     '''
     'price' the price per second for your plan, denominated in CURRENCY.
     '''
+    self._check_owner_and_active()
     assert len(name) <= 255, "Plan name is too long."
-    assert self.is_active, "Subscription contract has been retired"
-    assert self.owner == msg.sender, "You are not the owner."
     plan: Plan = Plan({name: name, price: price, rate_limit: rate_limit, time_interval: time_interval, is_active: False})
     plan_id: uint8 = self.num_plans + 1
     self.plans[plan_id] = plan
@@ -114,8 +118,7 @@ def create_plan(name: String[255], price: uint256, rate_limit: uint256, time_int
 
 @external
 def activate_plan(plan_id: uint8):
-    assert self.is_active, "Subscription contract has been retired"
-    assert self.owner == msg.sender, "You are not the owner."
+    self._check_owner_and_active()
     plan: Plan = self.plans[plan_id]
     assert plan.price > 0, "Plan does not exist."
     assert not plan.is_active, "Plan is already active."
@@ -127,9 +130,7 @@ def retire_plan(plan_id: uint8):
     """
     'plan_id': the plan id of the Plan you wish to retire.
     """
-
-    assert self.is_active, "Subscription contract has been retired"
-    assert self.owner == msg.sender, "You are not the owner."
+    self._check_owner_and_active()
     plan: Plan = self.plans[plan_id]
     assert plan.is_active, "Plan is not active."
     plan.is_active = False
@@ -137,7 +138,6 @@ def retire_plan(plan_id: uint8):
 
 @external
 def retire_contract():
-    assert self.is_active, "Subscription contract has been retired"
-    assert self.owner == msg.sender, "You are not the owner."
+    self._check_owner_and_active()
     self.is_active = False
     log SubscriberRetired()
