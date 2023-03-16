@@ -8,6 +8,8 @@ API_VERSION: immutable(String[8])
 struct Plan:
     is_active: bool
     price: uint256
+    rate_limit: uint256
+    time_interval: uint256
 
 is_active: bool
 owner: address
@@ -23,6 +25,8 @@ event NewSubscriber:
 event PlanCreated:
     plan_id: uint8
     price: uint256
+    rate_limit: uint256
+    time_interval: uint256
 
 event PlanActivated:
     plan_id: uint8
@@ -92,14 +96,17 @@ def _subscribe(plan_id: uint8, amount: uint256, subscriber: address) -> uint256:
 ###################
 
 @external
-def create_plan(price: uint256) -> Plan:
+def create_plan(price: uint256, rate_limit: uint256, time_interval: uint256) -> Plan:
+    '''
+    'price' the price per second for your plan, denominated in CURRENCY.
+    '''
     assert self.is_active, "Subscription contract has been retired"
     assert self.owner == msg.sender, "You are not the owner."
-    plan: Plan = Plan({is_active: False, price: price})
+    plan: Plan = Plan({is_active: False, price: price, rate_limit: rate_limit, time_interval: time_interval})
     plan_id: uint8 = self.num_plans + 1
     self.plans[plan_id] = plan
     self.num_plans = plan_id
-    log PlanCreated(plan_id, price)
+    log PlanCreated(plan_id, price, rate_limit, time_interval)
     return plan
 
 @external
@@ -114,6 +121,10 @@ def activate_plan(plan_id: uint8):
 
 @external
 def retire_plan(plan_id: uint8):
+    """
+    'plan_id': the plan id of the Plan you wish to retire.
+    """
+
     assert self.is_active, "Subscription contract has been retired"
     assert self.owner == msg.sender, "You are not the owner."
     plan: Plan = self.plans[plan_id]
