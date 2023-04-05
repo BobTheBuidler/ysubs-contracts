@@ -6,10 +6,11 @@ CURRENCY: immutable(ERC20)
 API_VERSION: immutable(String[8])
 
 struct Plan:
-    is_active: bool
+    name: String[255]
     price: uint256
     rate_limit: uint256
     time_interval: uint256
+    is_active: bool
 
 is_active: bool
 owner: address
@@ -24,6 +25,7 @@ event NewSubscriber:
 
 event PlanCreated:
     plan_id: uint8
+    name: String[255]
     price: uint256
     rate_limit: uint256
     time_interval: uint256
@@ -96,17 +98,18 @@ def _subscribe(plan_id: uint8, amount: uint256, subscriber: address) -> uint256:
 ###################
 
 @external
-def create_plan(price: uint256, rate_limit: uint256, time_interval: uint256) -> Plan:
+def create_plan(name: String[255], price: uint256, rate_limit: uint256, time_interval: uint256) -> Plan:
     '''
     'price' the price per second for your plan, denominated in CURRENCY.
     '''
+    assert len(name) <= 255, "Plan name is too long."
     assert self.is_active, "Subscription contract has been retired"
     assert self.owner == msg.sender, "You are not the owner."
-    plan: Plan = Plan({is_active: False, price: price, rate_limit: rate_limit, time_interval: time_interval})
+    plan: Plan = Plan({name: name, price: price, rate_limit: rate_limit, time_interval: time_interval, is_active: False})
     plan_id: uint8 = self.num_plans + 1
     self.plans[plan_id] = plan
     self.num_plans = plan_id
-    log PlanCreated(plan_id, price, rate_limit, time_interval)
+    log PlanCreated(plan_id, name, price, rate_limit, time_interval)
     return plan
 
 @external

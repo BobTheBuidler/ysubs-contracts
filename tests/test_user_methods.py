@@ -11,7 +11,7 @@ def test_subscribe(subscriber_contract, lusd_contract, accounts):
         amount = i*10**18
         with brownie.reverts('Plan does not exist or has been retired.'):
             subscriber_contract.subscribe(i, amount, _from(user))
-        subscriber_contract.create_plan(amount/10**10, _from(owner))
+        subscriber_contract.create_plan("Test Plan", amount/10**10, 100, 1000, _from(owner))
         subscriber_contract.activate_plan(i, _from(owner))
         with brownie.reverts('ERC20: transfer amount exceeds balance'):
             subscriber_contract.subscribe(i, amount, _from(user))
@@ -30,7 +30,7 @@ def test_subscribe_for(subscriber_contract, lusd_contract, accounts):
         amount = i*10**18
         with brownie.reverts('Plan does not exist or has been retired.'):
             subscriber_contract.subscribe_for(i, amount, user, _from(helper))
-        subscriber_contract.create_plan(amount/10**10, _from(owner))
+        subscriber_contract.create_plan("Test Plan", amount/10**10, 100, 1000, _from(owner))
         subscriber_contract.activate_plan(i, _from(owner))
         with brownie.reverts('ERC20: transfer amount exceeds balance'):
             subscriber_contract.subscribe_for(i, amount, user, _from(helper))
