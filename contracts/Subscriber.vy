@@ -8,7 +8,8 @@ API_VERSION: immutable(String[8])
 struct Plan:
     name: String[255]
     price: uint256
-    rate_limit: uint256
+    rate_limit_per_day: uint256
+    rate_limit_per_minute: uint256
     time_interval: uint256
     is_active: bool
 
@@ -27,7 +28,8 @@ event PlanCreated:
     plan_id: uint8
     name: String[255]
     price: uint256
-    rate_limit: uint256
+    rate_limit_per_day: uint256
+    rate_limit_per_minute: uint256
     time_interval: uint256
 
 event PlanActivated:
@@ -103,17 +105,17 @@ def _subscribe(plan_id: uint8, amount: uint256, subscriber: address) -> uint256:
 ###################
 
 @external
-def create_plan(name: String[255], price: uint256, rate_limit: uint256, time_interval: uint256) -> Plan:
+def create_plan(name: String[255], price: uint256, rate_limit_per_day: uint256, rate_limit_per_minute: uint256, time_interval: uint256) -> Plan:
     '''
     'price' the price per second for your plan, denominated in CURRENCY.
     '''
     self._check_owner_and_active()
     assert len(name) <= 255, "Plan name is too long."
-    plan: Plan = Plan({name: name, price: price, rate_limit: rate_limit, time_interval: time_interval, is_active: False})
+    plan: Plan = Plan({name: name, price: price, rate_limit_per_day: rate_limit_per_day, rate_limit_per_minute: rate_limit_per_minute, time_interval: time_interval, is_active: False})
     plan_id: uint8 = self.num_plans + 1
     self.plans[plan_id] = plan
     self.num_plans = plan_id
-    log PlanCreated(plan_id, name, price, rate_limit, time_interval)
+    log PlanCreated(plan_id, name, price, rate_limit_per_day, rate_limit_per_minute, time_interval)
     return plan
 
 @external
